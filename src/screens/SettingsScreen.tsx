@@ -142,17 +142,24 @@ export default function SettingsScreen() {
           <section className="bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4">
             <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-3">{t('settings.notification')}</p>
             <div className="grid grid-cols-3 gap-2 mb-3">
-              {(['06:00','08:00','10:00','14:00','20:00','22:00'] as const).map(time => (
+              {([
+                { value: '06:00', label: '6:00 AM' },
+                { value: '08:00', label: '8:00 AM' },
+                { value: '10:00', label: '10:00 AM' },
+                { value: '14:00', label: '2:00 PM' },
+                { value: '20:00', label: '8:00 PM' },
+                { value: '22:00', label: '10:00 PM' },
+              ]).map(({ value, label }) => (
                 <button
-                  key={time}
-                  onClick={() => setNotifValue(time)}
+                  key={value}
+                  onClick={() => setNotifValue(value)}
                   className={`py-2.5 rounded-xl text-sm font-semibold min-h-[44px] transition-colors ${
-                    notifValue === time
+                    notifValue === value
                       ? 'bg-[#047857] text-white'
                       : 'bg-[#0f172a] text-[#94a3b8] border border-[#334155] hover:border-[#475569]'
                   }`}
                 >
-                  {time}
+                  {label}
                 </button>
               ))}
             </div>
@@ -172,6 +179,11 @@ export default function SettingsScreen() {
                 className="flex-1 bg-[#0f172a] text-[#f1f5f9] rounded-xl px-3 py-2.5 border border-[#334155] min-h-[44px] focus:border-[#047857] outline-none transition-colors text-center font-bold"
               />
             </div>
+            {notifValue && (
+              <p className="text-[#475569] text-xs mt-2 text-center">
+                {new Date(`2000-01-01T${notifValue}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+              </p>
+            )}
             {notifMsg && <p className="text-[#f87171] text-xs mt-2">{notifMsg}</p>}
           </section>
 
