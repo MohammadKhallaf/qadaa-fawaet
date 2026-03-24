@@ -1,17 +1,19 @@
-import type { ReactNode } from 'react'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router'
+import { useStore } from './store/store'
 import WizardScreen from './screens/WizardScreen'
 import DashboardScreen from './screens/DashboardScreen'
 import StatsScreen from './screens/StatsScreen'
 import SettingsScreen from './screens/SettingsScreen'
+import type { ReactNode } from 'react'
 
 function RootRedirect() {
-  // Will read from store in Task 4; hardcode to /wizard for now
-  return <Navigate to="/wizard" replace />
+  const wizardComplete = useStore(s => s.wizardComplete)
+  return <Navigate to={wizardComplete ? '/dashboard' : '/wizard'} replace />
 }
 
 function RequireWizard({ children }: { children: ReactNode }) {
-  // Will guard with store in Task 4; pass-through for now
+  const wizardComplete = useStore(s => s.wizardComplete)
+  if (!wizardComplete) return <Navigate to="/wizard" replace />
   return <>{children}</>
 }
 
