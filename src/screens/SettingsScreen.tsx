@@ -20,7 +20,19 @@ export default function SettingsScreen() {
   const currentMonth = toLocalISODate(new Date()).slice(0, 7)
   const graceUsedThisMonth = graceUsedMonth === currentMonth
 
-  const [notifValue, setNotifValue] = useState(notificationTime ?? '08:00')
+  const parseTime = (t: string) => {
+    const [h, m] = (t || '08:00').split(':').map(Number)
+    return { hour: h % 12 || 12, minute: m, ampm: h < 12 ? 'AM' : 'PM' }
+  }
+  const toHHMM = (hour: number, minute: number, ampm: string) => {
+    const h24 = ampm === 'AM' ? (hour === 12 ? 0 : hour) : (hour === 12 ? 12 : hour + 12)
+    return `${String(h24).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+  }
+  const initTime = parseTime(notificationTime ?? '08:00')
+  const [notifHour, setNotifHour] = useState(initTime.hour)
+  const [notifMinute, setNotifMinute] = useState(initTime.minute)
+  const [notifAmpm, setNotifAmpm] = useState(initTime.ampm)
+  const notifValue = toHHMM(notifHour, notifMinute, notifAmpm)
   const [notifMsg, setNotifMsg] = useState<string | null>(null)
   const [notifSaved, setNotifSaved] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
@@ -140,50 +152,54 @@ export default function SettingsScreen() {
 
           {/* Notification */}
           <section className="bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4">
-            <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-3">{t('settings.notification')}</p>
-            <div className="grid grid-cols-3 gap-2 mb-3">
-              {([
-                { value: '06:00', label: '6:00 AM' },
-                { value: '08:00', label: '8:00 AM' },
-                { value: '10:00', label: '10:00 AM' },
-                { value: '14:00', label: '2:00 PM' },
-                { value: '20:00', label: '8:00 PM' },
-                { value: '22:00', label: '10:00 PM' },
-              ]).map(({ value, label }) => (
-                <button
-                  key={value}
-                  onClick={() => setNotifValue(value)}
-                  className={`py-2.5 rounded-xl text-sm font-semibold min-h-[44px] transition-colors ${
-                    notifValue === value
-                      ? 'bg-[#047857] text-white'
-                      : 'bg-[#0f172a] text-[#94a3b8] border border-[#334155] hover:border-[#475569]'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-            <div className="flex gap-2 items-stretch">
-              <button
-                onClick={handleSaveNotification}
-                className={`px-5 py-2.5 rounded-xl font-semibold text-sm min-h-[44px] flex-shrink-0 transition-colors ${
-                  notifSaved ? 'bg-[#34d399] text-[#0a2318]' : 'bg-[#047857] text-white hover:bg-[#059669]'
-                }`}
+            <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-4">{t('settings.notification')}</p>
+            <div className="flex items-center justify-center gap-2 mb-4">
+              {/* Hour */}
+              <select
+                value={notifHour}
+                onChange={e => setNotifHour(Number(e.target.value))}
+                className="bg-[#0f172a] text-[#f1f5f9] text-2xl font-bold rounded-xl border border-[#334155] focus:border-[#047857] outline-none px-3 py-2 min-w-[70px] text-center appearance-none cursor-pointer"
               >
-                {notifSaved ? '✓' : t('settings.notificationSave')}
-              </button>
-              <input
-                type="time"
-                value={notifValue}
-                onChange={e => setNotifValue(e.target.value)}
-                className="flex-1 bg-[#0f172a] text-[#f1f5f9] rounded-xl px-3 py-2.5 border border-[#334155] min-h-[44px] focus:border-[#047857] outline-none transition-colors text-center font-bold"
-              />
+                {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                  <option key={h} value={h}>{String(h).padStart(2, '0')}</option>
+                ))}
+              </select>
+              <span className="text-[#f1f5f9] text-2xl font-bold">:</span>
+              {/* Minute */}
+              <select
+                value={notifMinute}
+                onChange={e => setNotifMinute(Number(e.target.value))}
+                className="bg-[#0f172a] text-[#f1f5f9] text-2xl font-bold rounded-xl border border-[#334155] focus:border-[#047857] outline-none px-3 py-2 min-w-[70px] text-center appearance-none cursor-pointer"
+              >
+                {[0, 15, 30, 45].map(m => (
+                  <option key={m} value={m}>{String(m).padStart(2, '0')}</option>
+                ))}
+              </select>
+              {/* AM/PM */}
+              <div className="flex flex-col gap-1">
+                {(['AM', 'PM'] as const).map(period => (
+                  <button
+                    key={period}
+                    onClick={() => setNotifAmpm(period)}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-colors ${
+                      notifAmpm === period
+                        ? 'bg-[#047857] text-white'
+                        : 'bg-[#0f172a] text-[#64748b] border border-[#334155]'
+                    }`}
+                  >
+                    {period}
+                  </button>
+                ))}
+              </div>
             </div>
-            {notifValue && (
-              <p className="text-[#475569] text-xs mt-2 text-center">
-                {new Date(`2000-01-01T${notifValue}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
-              </p>
-            )}
+            <button
+              onClick={handleSaveNotification}
+              className={`w-full py-3 rounded-xl font-semibold text-sm min-h-[44px] transition-colors ${
+                notifSaved ? 'bg-[#34d399] text-[#0a2318]' : 'bg-[#047857] text-white hover:bg-[#059669]'
+              }`}
+            >
+              {notifSaved ? '✓ ' + t('dashboard.targetSaved') : t('settings.notificationSave')}
+            </button>
             {notifMsg && <p className="text-[#f87171] text-xs mt-2">{notifMsg}</p>}
           </section>
 
