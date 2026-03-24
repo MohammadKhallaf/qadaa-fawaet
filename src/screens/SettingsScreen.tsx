@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/store'
 import { toLocalISODate } from '../utils/date'
+import { setupNotification } from '../utils/notifications'
 import i18n from '../i18n'
 import BottomNav from '../components/BottomNav'
 import ShareModal from '../components/ShareModal'
@@ -14,14 +15,19 @@ export default function SettingsScreen() {
     setNotificationPermission, notificationPermission, exportBackup, importBackup, resetAll } = useStore()
 
   const graceUsedMonth = useStore(s => s.graceUsedMonth)
+  const dailyTarget = useStore(s => s.dailyTarget)
+  const setDailyTarget = useStore(s => s.setDailyTarget)
   const currentMonth = toLocalISODate(new Date()).slice(0, 7)
   const graceUsedThisMonth = graceUsedMonth === currentMonth
 
   const [notifValue, setNotifValue] = useState(notificationTime ?? '')
   const [notifMsg, setNotifMsg] = useState<string | null>(null)
+  const [notifSaved, setNotifSaved] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [importError, setImportError] = useState<string | null>(null)
   const [showShare, setShowShare] = useState(false)
+  const [targetValue, setTargetValue] = useState(String(dailyTarget))
+  const [targetSaved, setTargetSaved] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   async function handleSaveNotification() {
@@ -34,10 +40,21 @@ export default function SettingsScreen() {
     }
     if (permission === 'granted') {
       setNotificationTime(notifValue)
+      setupNotification(notifValue, language)
       setNotifMsg(null)
+      setNotifSaved(true)
+      setTimeout(() => setNotifSaved(false), 2000)
     } else {
       setNotifMsg(t('settings.notificationDenied'))
     }
+  }
+
+  function handleSaveTarget() {
+    const n = parseInt(targetValue)
+    if (!n || n < 1 || n > 100) return
+    setDailyTarget(n)
+    setTargetSaved(true)
+    setTimeout(() => setTargetSaved(false), 2000)
   }
 
   function handleLanguage(lang: 'ar' | 'en') {
@@ -97,16 +114,41 @@ export default function SettingsScreen() {
             </div>
           </section>
 
+          {/* Daily Target */}
+          <section className="bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4">
+            <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-3">{t('dashboard.targetLabel')}</p>
+            <div className="flex gap-2 items-stretch">
+              <button
+                onClick={handleSaveTarget}
+                className={`px-5 py-2.5 rounded-xl font-semibold text-sm min-h-[44px] flex-shrink-0 transition-colors ${
+                  targetSaved ? 'bg-[#34d399] text-[#0a2318]' : 'bg-[#047857] text-white hover:bg-[#059669]'
+                }`}
+              >
+                {targetSaved ? t('dashboard.targetSaved') : t('settings.notificationSave')}
+              </button>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={targetValue}
+                onChange={e => setTargetValue(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSaveTarget()}
+                className="flex-1 bg-[#0f172a] text-[#f1f5f9] rounded-xl px-3 py-2.5 border border-[#334155] min-h-[44px] focus:border-[#047857] outline-none transition-colors text-center text-lg font-bold"
+              />
+            </div>
+          </section>
+
           {/* Notification */}
           <section className="bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4">
             <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-3">{t('settings.notification')}</p>
             <div className="flex gap-2 items-stretch">
-              {/* In RTL: Save button first in source = visually on the right */}
               <button
                 onClick={handleSaveNotification}
-                className="px-5 py-2.5 bg-[#047857] text-white rounded-xl font-semibold text-sm min-h-[44px] hover:bg-[#059669] transition-colors flex-shrink-0"
+                className={`px-5 py-2.5 rounded-xl font-semibold text-sm min-h-[44px] flex-shrink-0 transition-colors ${
+                  notifSaved ? 'bg-[#34d399] text-[#0a2318]' : 'bg-[#047857] text-white hover:bg-[#059669]'
+                }`}
               >
-                {t('settings.notificationSave')}
+                {notifSaved ? '✓' : t('settings.notificationSave')}
               </button>
               <input
                 type="time"
@@ -146,7 +188,7 @@ export default function SettingsScreen() {
             {importError && <p className="text-[#f87171] text-xs">{importError}</p>}
           </section>
 
-          {/* Feature 4: Grace Day info */}
+          {/* Grace Day info */}
           <section className="bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4">
             <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-3">{t('settings.graceDay')}</p>
             <div className="flex items-center justify-between">

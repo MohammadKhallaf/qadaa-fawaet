@@ -42,6 +42,8 @@ export default function PrayerRow({ prayerKey }: Props) {
   const totalMissedDays = useStore(s => s.totalMissedDays)
   const logPrayer = useStore(s => s.logPrayer)
   const logPrayerBatch = useStore(s => s.logPrayerBatch)
+  const undoPrayer = useStore(s => s.undoPrayer)
+  const tourComplete = useStore(s => s.dashboardTourComplete)
 
   const [showBatch, setShowBatch] = useState(false)
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -49,6 +51,7 @@ export default function PrayerRow({ prayerKey }: Props) {
   const pct = totalMissedDays > 0 ? Math.min((prayer.recovered / totalMissedDays) * 100, 100) : 0
   const isDone = prayer.recovered >= totalMissedDays && totalMissedDays > 0
   const remaining = Math.max(0, totalMissedDays - prayer.recovered)
+  const canUndo = prayer.recovered > 0
 
   function handlePointerDown(e: React.PointerEvent) {
     e.preventDefault()
@@ -81,7 +84,6 @@ export default function PrayerRow({ prayerKey }: Props) {
           <p className={`font-semibold text-sm ${isDone ? 'text-[#34d399]' : 'text-[#e2e8f0]'}`}>
             {t(`prayers.${prayerKey}`)}
           </p>
-          {/* Feature 5: Framing flip — recovered is hero */}
           <p className={`text-xs font-bold mt-0.5 ${prayer.recovered > 0 ? 'text-[#34d399]' : 'text-[#334155]'}`}>
             {prayer.recovered.toLocaleString(numLocale)} {t('dashboard.recovered')}
           </p>
@@ -94,25 +96,44 @@ export default function PrayerRow({ prayerKey }: Props) {
       </div>
 
       {/* Controls (left side in RTL) */}
-      <div className="flex items-center gap-2.5 flex-shrink-0 relative">
+      <div className="flex items-center gap-1.5 flex-shrink-0 relative">
         <ProgressRing pct={pct} />
 
-        {/* Feature 6: Long-press for batch log */}
-        <button
-          onPointerDown={handlePointerDown}
-          onPointerUp={handlePointerUp}
-          onPointerLeave={handlePointerUp}
-          onContextMenu={e => e.preventDefault()}
-          onClick={handleClick}
-          disabled={isDone}
-          className={`w-10 h-10 rounded-xl font-bold text-sm flex items-center justify-center flex-shrink-0 transition-all select-none ${
-            isDone
-              ? 'bg-[#065f46]/30 text-[#34d399]/50 cursor-not-allowed'
-              : 'bg-[#047857] text-white shadow-md shadow-[#047857]/30 hover:bg-[#059669] active:scale-90'
-          }`}
-        >
-          {isDone ? '✓' : '+١'}
-        </button>
+        {/* Undo button — visible when recovered > 0 */}
+        {canUndo && (
+          <button
+            onClick={() => undoPrayer(prayerKey)}
+            className="w-7 h-7 rounded-lg bg-[#1e293b] border border-[#334155] text-[#475569] text-xs flex items-center justify-center hover:border-[#f87171]/50 hover:text-[#f87171] transition-all flex-shrink-0"
+            title={t('dashboard.undo')}
+          >
+            −
+          </button>
+        )}
+
+        {/* +1 button with long-press for batch */}
+        <div className="flex flex-col items-center gap-0.5">
+          <button
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerLeave={handlePointerUp}
+            onContextMenu={e => e.preventDefault()}
+            onClick={handleClick}
+            disabled={isDone}
+            className={`w-10 h-10 rounded-xl font-bold text-sm flex items-center justify-center flex-shrink-0 transition-all select-none ${
+              isDone
+                ? 'bg-[#065f46]/30 text-[#34d399]/50 cursor-not-allowed'
+                : 'bg-[#047857] text-white shadow-md shadow-[#047857]/30 hover:bg-[#059669] active:scale-90'
+            }`}
+          >
+            {isDone ? '✓' : '+١'}
+          </button>
+          {/* Batch hint — shown after tour complete and when not done */}
+          {tourComplete && !isDone && (
+            <span className="text-[#334155] text-[8px] leading-none select-none whitespace-nowrap">
+              {t('dashboard.holdForMore')}
+            </span>
+          )}
+        </div>
 
         {/* Batch log popover */}
         <AnimatePresence>

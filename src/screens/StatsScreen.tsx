@@ -1,8 +1,73 @@
-import { useStore, PRAYER_KEYS } from '../store/store'
+import { useStore, PRAYER_KEYS, type AppState } from '../store/store'
 import { useTranslation } from 'react-i18next'
 import { useStreak } from '../hooks/useStreak'
 import BadgeGrid from '../components/BadgeCard'
 import BottomNav from '../components/BottomNav'
+
+const BADGE_ORDER = ['first_log','first_week','warrior_30','golden_year','quarter_way','halfway','almost_there','complete']
+const BADGE_ICONS: Record<string, string> = {
+  first_log: '🌱', first_week: '🔥', warrior_30: '⚔️', golden_year: '🌟',
+  quarter_way: '🎯', halfway: '🏃', almost_there: '🏅', complete: '🏆',
+}
+
+// mirrors BADGE_DEFINITIONS from store — gives a 0-100 progress % toward each badge
+function badgeProgress(id: string, s: AppState): number {
+  const pct = (n: number, total: number) => Math.min((n / total) * 100, 99)
+  switch (id) {
+    case 'first_log':    return s.points > 0 ? 100 : 0
+    case 'first_week':   return pct(s.streak, 7)
+    case 'warrior_30':   return pct(s.streak, 30)
+    case 'golden_year':  return pct(s.streak, 365)
+    case 'quarter_way': {
+      if (s.totalMissedDays === 0) return 0
+      const best = Math.max(...PRAYER_KEYS.map(k => (s.prayers[k].recovered / s.totalMissedDays) * 100))
+      return pct(best, 25)
+    }
+    case 'halfway': {
+      if (s.totalMissedDays === 0) return 0
+      const best = Math.max(...PRAYER_KEYS.map(k => (s.prayers[k].recovered / s.totalMissedDays) * 100))
+      return pct(best, 50)
+    }
+    case 'almost_there': {
+      if (s.totalMissedDays === 0) return 0
+      const best = Math.max(...PRAYER_KEYS.map(k => (s.prayers[k].recovered / s.totalMissedDays) * 100))
+      return pct(best, 75)
+    }
+    case 'complete': {
+      if (s.totalMissedDays === 0) return 0
+      const best = Math.max(...PRAYER_KEYS.map(k => (s.prayers[k].recovered / s.totalMissedDays) * 100))
+      return pct(best, 100)
+    }
+    default: return 0
+  }
+}
+
+function NextBadgeHint() {
+  const { t } = useTranslation()
+  const state = useStore(s => s)
+  const unlockedIds = new Set(state.badges.map(b => b.id))
+  const nextId = BADGE_ORDER.find(id => !unlockedIds.has(id))
+  if (!nextId) return null
+  const pct = Math.round(badgeProgress(nextId, state as AppState))
+  return (
+    <div className="mx-4 mb-4 bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4">
+      <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-3">{t('stats.nextBadge')}</p>
+      <div className="flex items-center gap-3">
+        <span className="text-3xl">{BADGE_ICONS[nextId]}</span>
+        <div className="flex-1 min-w-0">
+          <p className="text-[#e2e8f0] text-sm font-semibold mb-1.5">{t(`stats.badges_data.${nextId}`)}</p>
+          <div className="bg-[#0f172a] rounded-full h-2 overflow-hidden">
+            <div
+              className="h-2 rounded-full transition-all duration-700"
+              style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #047857, #34d399)' }}
+            />
+          </div>
+          <p className="text-[#475569] text-xs mt-1">{t('stats.nextBadgeProgress', { pct })}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function getRank(points: number, t: (k: string) => string): { label: string; color: string; bg: string } {
   if (points >= 5000) return { label: t('stats.ranks.platinum'), color: '#e2e8f0', bg: '#334155' }
@@ -115,6 +180,9 @@ export default function StatsScreen() {
           <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-3">{t('stats.estimateTitle')}</p>
           <CompletionEstimate />
         </div>
+
+        {/* Next badge hint */}
+        <NextBadgeHint />
 
         {/* Badges header */}
         <div className="px-4 mb-3">

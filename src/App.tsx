@@ -1,5 +1,7 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router'
+import { useEffect } from 'react'
 import { useStore } from './store/store'
+import { setupNotification } from './utils/notifications'
 import WizardScreen from './screens/WizardScreen'
 import DashboardScreen from './screens/DashboardScreen'
 import StatsScreen from './screens/StatsScreen'
@@ -29,6 +31,25 @@ const router = createBrowserRouter([
   { path: '/settings',  element: <SettingsScreen /> },
 ])
 
+function NotificationBootstrap() {
+  const notificationTime = useStore(s => s.notificationTime)
+  const notificationPermission = useStore(s => s.notificationPermission)
+  const language = useStore(s => s.language)
+
+  useEffect(() => {
+    if (notificationPermission === 'granted') {
+      setupNotification(notificationTime, language)
+    }
+  }, [notificationTime, notificationPermission, language])
+
+  return null
+}
+
 export default function App() {
-  return <RouterProvider router={router} />
+  return (
+    <>
+      <NotificationBootstrap />
+      <RouterProvider router={router} />
+    </>
+  )
 }

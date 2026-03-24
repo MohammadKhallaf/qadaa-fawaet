@@ -97,6 +97,7 @@ export interface AppState {
   logPrayer: (prayer: PrayerKey) => void
   logPrayerBatch: (prayer: PrayerKey, count: number) => void
   logFullDay: () => void
+  undoPrayer: (prayer: PrayerKey) => void
   setDailyTarget: (n: number) => void
   setLastDuaShownDate: (date: string) => void
   setIntentionSetDate: (date: string) => void
@@ -245,6 +246,16 @@ export const useStore = create<AppState>()(
         runConfettiChecks(prevBadgeIds, { ...partialState, badges } as AppState)
       },
 
+      undoPrayer: (prayer) => {
+        const state = get()
+        const todayReset = resetTodayIfNeeded(state)
+        const prayers = { ...state.prayers }
+        if (prayers[prayer].recovered <= 0) return
+        prayers[prayer] = { recovered: prayers[prayer].recovered - 1 }
+        const points = Math.max(0, state.points - 10)
+        set({ ...todayReset, prayers, points })
+      },
+
       setDailyTarget: (dailyTarget) => set({ dailyTarget }),
       setLastDuaShownDate: (lastDuaShownDate) => set({ lastDuaShownDate }),
       setIntentionSetDate: (intentionSetDate) => set({ intentionSetDate }),
@@ -314,7 +325,7 @@ export const useStore = create<AppState>()(
       partialize: (state) => {
         const {
           completeOnboarding, completeDashboardTour, completeWizard,
-          logPrayer, logPrayerBatch, logFullDay,
+          logPrayer, logPrayerBatch, logFullDay, undoPrayer,
           setDailyTarget, setLastDuaShownDate, setIntentionSetDate,
           setLanguage, setNotificationTime, setNotificationPermission,
           resetAll, getBackupJson, exportBackup, importBackup,
