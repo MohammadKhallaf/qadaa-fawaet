@@ -19,7 +19,8 @@ interface Props {
 }
 
 export default function BadgeGrid({ badges }: Props) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const dateLocale = i18n.language === 'ar' ? 'ar-EG' : 'en-US'
   const unlockedIds = new Set(badges.map(b => b.id))
 
   return (
@@ -28,16 +29,31 @@ export default function BadgeGrid({ badges }: Props) {
         const badge = badges.find(b => b.id === id)
         const unlocked = unlockedIds.has(id)
         return (
-          <div key={id} className={`bg-[#1e293b] rounded-2xl p-4 flex flex-col items-center gap-2 ${unlocked ? '' : 'opacity-40'}`}>
-            <span className="text-3xl">{BADGE_ICONS[id]}</span>
-            <p className="text-sm font-medium text-[#f1f5f9] text-center">{t(`stats.badges_data.${id}`)}</p>
-            {unlocked && badge && (
-              <p className="text-[10px] text-[#64748b]">
-                {new Date(badge.unlockedAt).toLocaleDateString('ar-EG')}
+          <div
+            key={id}
+            className={`rounded-2xl p-4 flex flex-col items-center gap-2 border transition-all ${
+              unlocked
+                ? 'bg-[#1e293b] border-[#334155]/50'
+                : 'bg-[#161f2e] border-[#1e293b]'
+            }`}
+          >
+            <span
+              className="text-3xl transition-all"
+              style={unlocked ? {} : { filter: 'grayscale(1) opacity(0.3)' }}
+            >
+              {BADGE_ICONS[id]}
+            </span>
+            <p className={`text-xs font-semibold text-center ${unlocked ? 'text-[#e2e8f0]' : 'text-[#334155]'}`}>
+              {t(`stats.badges_data.${id}`)}
+            </p>
+            {unlocked && badge ? (
+              <p className="text-[10px] text-[#34d399]">
+                {new Date(badge.unlockedAt).toLocaleDateString(dateLocale)}
               </p>
-            )}
-            {!unlocked && (
-              <p className="text-[10px] text-[#64748b]">{t('stats.lockedBadge')}</p>
+            ) : (
+              <p className="text-[10px] text-[#1e293b] bg-[#1e293b] rounded px-1">
+                {t('stats.lockedBadge')}
+              </p>
             )}
           </div>
         )

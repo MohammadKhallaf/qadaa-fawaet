@@ -7,19 +7,77 @@
     "maghrib": "Maghrib",
     "isha": "Isha"
   },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "begin": "Let's Start",
+    "slides": [
+      {
+        "emoji": "🕌",
+        "title": "Welcome to Qadaa",
+        "body": "A companion to help you make up your missed prayers — step by step, day by day."
+      },
+      {
+        "emoji": "📿",
+        "title": "Log Every Prayer You Make Up",
+        "body": "Tap +1 on any prayer you made up today, or press \"Log Full Day\" to record all five at once."
+      },
+      {
+        "emoji": "🔥",
+        "title": "Keep Your Streak",
+        "body": "Every day you log a prayer adds to your streak. The streak keeps you consistent — don't break it!"
+      },
+      {
+        "emoji": "🏆",
+        "title": "Earn Points & Badges",
+        "body": "Each prayer = 10 points. A full day = 100 points. Climb the ranks and unlock achievement badges."
+      }
+    ],
+    "tourPrayer": {
+      "title": "Log a Prayer",
+      "desc": "Tap +1 for each prayer you made up today. The ring shows your overall progress."
+    },
+    "tourFullDay": {
+      "title": "Full Day",
+      "desc": "Made up all five prayers today? Tap here to record them all at once."
+    },
+    "tourStreak": {
+      "title": "Your Daily Streak",
+      "desc": "Consecutive days you've logged. Try not to break it!"
+    },
+    "tourBanner": {
+      "title": "Today's Prayers",
+      "desc": "Shows how many prayers you've logged today toward your daily goal."
+    },
+    "tourDone": "Got it, let's go! 💪"
+  },
   "wizard": {
     "step1Title": "Your Info",
     "ageLabel": "Your current age",
+    "ageTip": "Your age right now. Used only to validate that your puberty age is less than your current age.",
     "pubertyAgeLabel": "Age at puberty",
+    "pubertyAgeTip": "The age at which you reached puberty and prayer became obligatory for you. Usually between 12–15. Missed prayers are counted from this age onward.",
     "step2Title": "Missed Prayer Years",
     "yearsLabel": "How many years did you not pray?",
+    "yearsTip": "Enter the number of years you stopped praying. Decimals are allowed (e.g. 2.5 years). Each year is counted as 365 days.",
     "advancedToggle": "Advanced mode",
+    "advancedTip": "If your life had multiple phases — e.g. you prayed for a while, then stopped, then resumed — you can break it into separate periods here.",
     "addPeriod": "Add period",
     "removePeriod": "Remove",
     "periodMissed": "Missed",
     "periodRegular": "Regular",
+    "periodMissedTip": "A period when you did not pray. Its days will be added to your total to make up.",
+    "periodRegularTip": "A period when you prayed regularly. These days are not counted toward your missed prayers.",
     "totalMissed": "Total missed days",
-    "step3Title": "Summary",
+    "totalMissedTip": "The number of days you need to make up, each with 5 prayers.",
+    "step3Title": "Daily Pace",
+    "step3Subtitle": "How many prayers do you want to make up each day?",
+    "pace1": "1 / day",
+    "pace5": "5 / day",
+    "pace10": "10 / day",
+    "paceCustom": "Custom",
+    "paceHint": "Your daily goal helps you track whether you're on schedule",
+    "step4Title": "Summary",
     "totalPrayers": "Total missed prayers",
     "confirm": "Start the journey",
     "back": "Back",
@@ -31,8 +89,41 @@
     "today": "Today",
     "outOf": "of",
     "logFullDay": "Log Full Day",
-    "recovered": "recovered"
+    "recovered": "recovered",
+    "remaining": "{{count}} remaining",
+    "prayers": "Prayers",
+    "catchupBehind": "You're {{count}} prayers behind your goal — add more today",
+    "weeklyGrid": "Recent Consistency"
   },
+  "batch": {
+    "title": "How many to log?",
+    "add5": "+5",
+    "add10": "+10",
+    "custom": "Custom",
+    "confirm": "Log",
+    "cancel": "Cancel"
+  },
+  "dua": {
+    "title": "Well Done 🌟",
+    "subtitle": "You completed today's prayers",
+    "text": "اللهم تقبّل منا، إنك أنت السميع العليم",
+    "subtext": "May Allah accept from you and make it a weight in your good deeds",
+    "close": "Ameen"
+  },
+  "intention": {
+    "title": "Intention",
+    "text": "نويتُ قضاء ما فاتني من الصلوات لله تعالى",
+    "confirm": "Ameen",
+    "auto": "Closing automatically…"
+  },
+  "hadiths": [
+    "\"Say: O My servants who have transgressed against themselves, do not despair of the mercy of Allah.\" (39:53)",
+    "\"Allah accepts the repentance of His servant as long as the soul has not reached the throat.\"",
+    "\"The one who repents from sin is like one who has no sin.\"",
+    "\"Verily, with hardship comes ease.\" (94:6)",
+    "\"Allah does not tire until you tire.\"",
+    "\"Whoever draws near to Me a hand's span, I draw near to him an arm's length.\""
+  ],
   "stats": {
     "title": "Your Stats",
     "streak": "Day Streak",
@@ -41,6 +132,11 @@
     "points": "Points",
     "badges": "Badges",
     "lockedBadge": "Locked",
+    "estimateTitle": "Completion Estimate",
+    "estimateYears": "At this pace you'll finish in ~{{years}} year(s)",
+    "estimateDate": "Estimated date: {{date}}",
+    "estimateNoData": "Log 3 days to calculate your estimate",
+    "estimatePace": "Your pace: {{count}} prayers/day",
     "ranks": {
       "bronze": "Bronze",
       "silver": "Silver",
@@ -66,16 +162,41 @@
     "notification": "Daily Reminder",
     "notificationSave": "Save",
     "notificationDenied": "Please allow notifications in browser settings",
+    "sync": "Sync Across Devices",
     "export": "Export Backup",
     "import": "Import Backup",
     "reset": "Reset Wizard",
     "resetConfirm": "Are you sure? All your data will be deleted.",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "graceDay": "Grace Day",
+    "graceDayRemaining_one": "{{count}} remaining this month",
+    "graceDayRemaining_zero": "Used this month",
+    "graceDayHint": "Miss one day without breaking your streak — once per month"
   },
   "nav": {
     "dashboard": "Home",
     "stats": "Stats",
     "settings": "Settings"
+  },
+  "share": {
+    "title": "Sync Data Across Devices",
+    "tabQr": "QR Code",
+    "tabClipboard": "Copy",
+    "tabImport": "Import",
+    "qrInstructions": "Open the app on your other device → Import → Scan this code",
+    "qrTooLarge": "Data too large for QR, use the Copy tab instead",
+    "qrScanHint": "Works with any QR scanner or phone camera",
+    "generating": "Generating…",
+    "clipboardInstructions": "Copy the text and send it to yourself via WhatsApp, Telegram, or Notes",
+    "copyButton": "Copy Data",
+    "copied": "✓ Copied!",
+    "clipboardHint": "On the other device: open app → Sync → Import → paste here",
+    "importInstructions": "Paste the backup data copied from another device",
+    "pastePlaceholder": "Paste data here…",
+    "importButton": "Import Data",
+    "importFailed": "Invalid data — make sure you copied it completely",
+    "importSuccess": "✓ Imported successfully!",
+    "close": "Close"
   },
   "errors": {
     "importFailed": "Failed to import file. Please check the file is valid."

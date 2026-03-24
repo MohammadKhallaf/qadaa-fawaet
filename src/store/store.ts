@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { fireConfetti } from '../components/confetti'
+import { toLocalISODate } from '../utils/date'
 
 export type PrayerKey = 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha'
 export const PRAYER_KEYS: PrayerKey[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']
@@ -13,13 +14,6 @@ export interface PrayerPeriod {
 export interface Badge {
   id: string
   unlockedAt: number
-}
-
-function toLocalISODate(d: Date): string {
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
 }
 
 function calcTotalMissedDays(periods: PrayerPeriod[]): number {
@@ -65,6 +59,8 @@ const initialPrayers = () =>
   Object.fromEntries(PRAYER_KEYS.map(k => [k, { recovered: 0 }])) as Record<PrayerKey, { recovered: number }>
 
 export interface AppState {
+  onboardingComplete: boolean
+  dashboardTourComplete: boolean
   wizardComplete: boolean
   age: number
   pubertyAge: number
@@ -82,32 +78,67 @@ export interface AppState {
   notificationTime: string | null
   notificationPermission: 'default' | 'granted' | 'denied'
 
+  // Feature 1: Pace / daily target
+  dailyTarget: number
+
+  // Feature 4: Grace day
+  graceUsedMonth: string | null
+
+  // Feature 7: Dua after full day
+  lastDuaShownDate: string | null
+
+  // Feature 8: Daily intention
+  intentionSetDate: string | null
+
+  // Actions
+  completeOnboarding: () => void
+  completeDashboardTour: () => void
   completeWizard: (age: number, pubertyAge: number, periods: PrayerPeriod[]) => void
   logPrayer: (prayer: PrayerKey) => void
+  logPrayerBatch: (prayer: PrayerKey, count: number) => void
   logFullDay: () => void
+  setDailyTarget: (n: number) => void
+  setLastDuaShownDate: (date: string) => void
+  setIntentionSetDate: (date: string) => void
   setLanguage: (lang: 'ar' | 'en') => void
   setNotificationTime: (time: string | null) => void
   setNotificationPermission: (p: 'default' | 'granted' | 'denied') => void
   resetAll: () => void
+  getBackupJson: () => string
   exportBackup: () => void
   importBackup: (json: string) => boolean
 }
 
-function updateStreak(state: Pick<AppState, 'streak' | 'lastLogDate' | 'loggedDates'>) {
+function updateStreak(state: Pick<AppState, 'streak' | 'lastLogDate' | 'loggedDates' | 'graceUsedMonth'>) {
   const today = toLocalISODate(new Date())
   const yesterday = toLocalISODate(new Date(Date.now() - 86400000))
+  const twoDaysAgo = toLocalISODate(new Date(Date.now() - 2 * 86400000))
+  const currentMonth = today.slice(0, 7) // 'YYYY-MM'
+
   let streak = state.streak
+  let graceUsedMonth = state.graceUsedMonth
+
   if (state.lastLogDate === today) {
-    // no streak change
+    // Same day — no change
   } else if (state.lastLogDate === yesterday) {
     streak += 1
+  } else if (
+    streak > 0 &&
+    state.lastLogDate === twoDaysAgo &&
+    graceUsedMonth !== currentMonth
+  ) {
+    // Grace day: preserve and extend streak, mark this month as used
+    streak += 1
+    graceUsedMonth = currentMonth
   } else {
     streak = 1
   }
+
   const loggedDates = state.loggedDates.includes(today)
     ? state.loggedDates
     : [...state.loggedDates, today]
-  return { streak, lastLogDate: today, loggedDates }
+
+  return { streak, lastLogDate: today, loggedDates, graceUsedMonth }
 }
 
 function resetTodayIfNeeded(state: Pick<AppState, 'todayDate' | 'todayPrayers'>): Partial<AppState> {
@@ -121,6 +152,8 @@ function resetTodayIfNeeded(state: Pick<AppState, 'todayDate' | 'todayPrayers'>)
 export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
+      onboardingComplete: false,
+      dashboardTourComplete: false,
       wizardComplete: false,
       age: 0,
       pubertyAge: 0,
@@ -137,6 +170,13 @@ export const useStore = create<AppState>()(
       language: 'ar',
       notificationTime: null,
       notificationPermission: 'default',
+      dailyTarget: 5,
+      graceUsedMonth: null,
+      lastDuaShownDate: null,
+      intentionSetDate: null,
+
+      completeOnboarding: () => set({ onboardingComplete: true }),
+      completeDashboardTour: () => set({ dashboardTourComplete: true }),
 
       completeWizard: (age, pubertyAge, periods) => {
         set({
@@ -156,7 +196,27 @@ export const useStore = create<AppState>()(
         prayers[prayer] = { recovered: prayers[prayer].recovered + 1 }
         const todayPrayers = { ...(todayReset.todayPrayers ?? state.todayPrayers), [prayer]: true as const }
         const points = state.points + 10
-        const streakUpdate = updateStreak(state)
+        const streakUpdate = updateStreak({ ...state, ...todayReset })
+        const prevBadgeIds = new Set(state.badges.map(b => b.id))
+        const partialState = { ...state, ...todayReset, prayers, todayPrayers, points, ...streakUpdate }
+        const newBadges = checkBadges(partialState as AppState)
+        const badges = [...state.badges, ...newBadges]
+        set({ ...todayReset, prayers, todayPrayers, points, ...streakUpdate, badges })
+        runConfettiChecks(prevBadgeIds, { ...partialState, badges } as AppState)
+      },
+
+      logPrayerBatch: (prayer, count) => {
+        const state = get()
+        if (count <= 0) return
+        const todayReset = resetTodayIfNeeded(state)
+        const prayers = { ...state.prayers }
+        const remaining = state.totalMissedDays - prayers[prayer].recovered
+        const actual = Math.min(count, remaining)
+        if (actual <= 0) return
+        prayers[prayer] = { recovered: prayers[prayer].recovered + actual }
+        const todayPrayers = { ...(todayReset.todayPrayers ?? state.todayPrayers), [prayer]: true as const }
+        const points = state.points + actual * 10
+        const streakUpdate = updateStreak({ ...state, ...todayReset })
         const prevBadgeIds = new Set(state.badges.map(b => b.id))
         const partialState = { ...state, ...todayReset, prayers, todayPrayers, points, ...streakUpdate }
         const newBadges = checkBadges(partialState as AppState)
@@ -176,7 +236,7 @@ export const useStore = create<AppState>()(
         })
         const todayPrayers: Partial<Record<PrayerKey, true>> = Object.fromEntries(PRAYER_KEYS.map(k => [k, true as const]))
         const points = state.points + 100
-        const streakUpdate = updateStreak(state)
+        const streakUpdate = updateStreak({ ...state, ...todayReset })
         const prevBadgeIds = new Set(state.badges.map(b => b.id))
         const partialState = { ...state, ...todayReset, prayers, todayPrayers, points, ...streakUpdate }
         const newBadges = checkBadges(partialState as AppState)
@@ -185,25 +245,36 @@ export const useStore = create<AppState>()(
         runConfettiChecks(prevBadgeIds, { ...partialState, badges } as AppState)
       },
 
-      setLanguage: (language) => {
-        set({ language })
-      },
-
-      setNotificationTime: (notificationTime) => {
-        set({ notificationTime })
-      },
-
-      setNotificationPermission: (notificationPermission) => {
-        set({ notificationPermission })
-      },
+      setDailyTarget: (dailyTarget) => set({ dailyTarget }),
+      setLastDuaShownDate: (lastDuaShownDate) => set({ lastDuaShownDate }),
+      setIntentionSetDate: (intentionSetDate) => set({ intentionSetDate }),
+      setLanguage: (language) => set({ language }),
+      setNotificationTime: (notificationTime) => set({ notificationTime }),
+      setNotificationPermission: (notificationPermission) => set({ notificationPermission }),
 
       resetAll: () => {
         set({
+          onboardingComplete: false, dashboardTourComplete: false,
           wizardComplete: false, age: 0, pubertyAge: 0, periods: [], totalMissedDays: 0,
           prayers: initialPrayers(), todayPrayers: {}, todayDate: null,
           streak: 0, lastLogDate: null, loggedDates: [], points: 0, badges: [],
           language: 'ar', notificationTime: null, notificationPermission: 'default',
+          dailyTarget: 5, graceUsedMonth: null, lastDuaShownDate: null, intentionSetDate: null,
         })
+      },
+
+      getBackupJson: () => {
+        const state = get()
+        const backup = {
+          wizardComplete: state.wizardComplete, age: state.age, pubertyAge: state.pubertyAge,
+          periods: state.periods, totalMissedDays: state.totalMissedDays, prayers: state.prayers,
+          todayPrayers: state.todayPrayers, todayDate: state.todayDate,
+          streak: state.streak, lastLogDate: state.lastLogDate, loggedDates: state.loggedDates,
+          points: state.points, badges: state.badges, language: state.language,
+          notificationTime: state.notificationTime, notificationPermission: state.notificationPermission,
+          dailyTarget: state.dailyTarget,
+        }
+        return JSON.stringify(backup)
       },
 
       exportBackup: () => {
@@ -215,6 +286,7 @@ export const useStore = create<AppState>()(
           streak: state.streak, lastLogDate: state.lastLogDate, loggedDates: state.loggedDates,
           points: state.points, badges: state.badges, language: state.language,
           notificationTime: state.notificationTime, notificationPermission: state.notificationPermission,
+          dailyTarget: state.dailyTarget,
         }
         const json = JSON.stringify(backup, null, 2)
         const date = toLocalISODate(new Date())
@@ -240,8 +312,14 @@ export const useStore = create<AppState>()(
     {
       name: 'qadaa-store',
       partialize: (state) => {
-        const { completeWizard, logPrayer, logFullDay, setLanguage, setNotificationTime,
-          setNotificationPermission, resetAll, exportBackup, importBackup, ...rest } = state
+        const {
+          completeOnboarding, completeDashboardTour, completeWizard,
+          logPrayer, logPrayerBatch, logFullDay,
+          setDailyTarget, setLastDuaShownDate, setIntentionSetDate,
+          setLanguage, setNotificationTime, setNotificationPermission,
+          resetAll, getBackupJson, exportBackup, importBackup,
+          ...rest
+        } = state
         return rest
       },
     }

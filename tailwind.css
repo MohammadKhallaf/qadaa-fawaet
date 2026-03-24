@@ -11,6 +11,114 @@
   --font-family-sans: 'Tajawal', sans-serif;
 }
 
+/* Global base */
+html, body, #root {
+  min-height: 100%;
+  background-color: #070e1a;
+}
+
+/* On desktop, show a subtle grid pattern behind the app column */
+@media (min-width: 640px) {
+  body {
+    background-image:
+      linear-gradient(rgba(4,120,87,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(4,120,87,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Give the app column a card-like shadow on desktop */
+  .max-w-lg.mx-auto {
+    box-shadow: 0 0 0 1px rgba(51,65,85,0.3), 0 40px 120px rgba(0,0,0,0.5);
+  }
+}
+
+/* Smooth scrolling */
+* {
+  scroll-behavior: smooth;
+}
+
+/* driver.js dark theme overrides */
+.qadaa-tour-popover.driver-popover {
+  background-color: #1e293b;
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  border-radius: 18px;
+  color: #f1f5f9;
+  font-family: 'Tajawal', sans-serif;
+  padding: 18px 20px 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(52,211,153,0.06);
+  max-width: 300px;
+}
+.qadaa-tour-popover .driver-popover-title {
+  color: #f1f5f9;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+.qadaa-tour-popover .driver-popover-description {
+  color: #64748b;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  margin-bottom: 2px;
+}
+.qadaa-tour-popover .driver-popover-footer {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(51,65,85,0.5);
+}
+.qadaa-tour-popover .driver-popover-navigation-btns {
+  gap: 6px;
+}
+.qadaa-tour-popover .driver-popover-navigation-btns button {
+  background-color: #047857;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  padding: 7px 16px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.qadaa-tour-popover .driver-popover-navigation-btns button:hover {
+  background-color: #065f46;
+}
+.qadaa-tour-popover .driver-popover-prev-btn {
+  background-color: #334155 !important;
+  color: #94a3b8 !important;
+}
+.qadaa-tour-popover .driver-popover-prev-btn:hover {
+  background-color: #475569 !important;
+}
+.qadaa-tour-popover .driver-popover-close-btn {
+  color: #475569;
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  transition: color 0.15s;
+}
+.qadaa-tour-popover .driver-popover-close-btn:hover {
+  color: #94a3b8;
+}
+.qadaa-tour-popover .driver-popover-progress-text {
+  color: #475569;
+  font-size: 0.6875rem;
+  font-family: 'Tajawal', sans-serif;
+}
+.qadaa-tour-popover .driver-popover-arrow-side-top.driver-popover-arrow {
+  border-bottom-color: #1e293b;
+}
+.qadaa-tour-popover .driver-popover-arrow-side-bottom.driver-popover-arrow {
+  border-top-color: #1e293b;
+}
+.qadaa-tour-popover .driver-popover-arrow-side-left.driver-popover-arrow {
+  border-right-color: #1e293b;
+}
+.qadaa-tour-popover .driver-popover-arrow-side-right.driver-popover-arrow {
+  border-left-color: #1e293b;
+}
+
 @font-face {
   font-family: 'Tajawal';
   src: url('/fonts/tajawal/Tajawal-Regular.woff2') format('woff2');

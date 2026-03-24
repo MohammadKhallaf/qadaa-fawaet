@@ -2,8 +2,10 @@ import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/store'
+import { toLocalISODate } from '../utils/date'
 import i18n from '../i18n'
 import BottomNav from '../components/BottomNav'
+import ShareModal from '../components/ShareModal'
 
 export default function SettingsScreen() {
   const { t } = useTranslation()
@@ -11,10 +13,15 @@ export default function SettingsScreen() {
   const { language, setLanguage, notificationTime, setNotificationTime,
     setNotificationPermission, notificationPermission, exportBackup, importBackup, resetAll } = useStore()
 
+  const graceUsedMonth = useStore(s => s.graceUsedMonth)
+  const currentMonth = toLocalISODate(new Date()).slice(0, 7)
+  const graceUsedThisMonth = graceUsedMonth === currentMonth
+
   const [notifValue, setNotifValue] = useState(notificationTime ?? '')
   const [notifMsg, setNotifMsg] = useState<string | null>(null)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [importError, setImportError] = useState<string | null>(null)
+  const [showShare, setShowShare] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   async function handleSaveNotification() {
@@ -60,75 +67,139 @@ export default function SettingsScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a] pb-24">
-      <div className="px-4 pt-6 pb-4">
-        <h1 className="text-2xl font-bold text-[#f1f5f9]">{t('settings.title')}</h1>
-      </div>
+    <div className="min-h-screen bg-[#0f172a]">
+      <div className="max-w-lg mx-auto pb-24">
 
-      <div className="space-y-4 px-4">
-        {/* Language */}
-        <div className="bg-[#1e293b] rounded-2xl p-4">
-          <p className="text-[#64748b] text-sm mb-3">{t('settings.language')}</p>
-          <div className="flex gap-2">
-            {(['ar', 'en'] as const).map(lang => (
-              <button key={lang} onClick={() => handleLanguage(lang)}
-                className={`flex-1 py-2 rounded-xl font-medium text-sm min-h-[44px] transition-colors ${language === lang ? 'bg-[#047857] text-white' : 'bg-[#334155] text-[#64748b]'}`}>
-                {t(`settings.${lang}`)}
-              </button>
-            ))}
-          </div>
+        {/* Header */}
+        <div className="px-4 pt-8 pb-5">
+          <h1 className="text-2xl font-bold text-[#f1f5f9] tracking-tight">{t('settings.title')}</h1>
         </div>
 
-        {/* Notification */}
-        <div className="bg-[#1e293b] rounded-2xl p-4">
-          <p className="text-[#64748b] text-sm mb-3">{t('settings.notification')}</p>
-          <div className="flex gap-2">
-            <input type="time" value={notifValue} onChange={e => setNotifValue(e.target.value)}
-              className="flex-1 bg-[#0f172a] text-[#f1f5f9] rounded-xl px-3 py-2 border border-[#334155] min-h-[44px]" />
-            <button onClick={handleSaveNotification}
-              className="px-4 py-2 bg-[#047857] text-white rounded-xl font-medium min-h-[44px]">
-              {t('settings.notificationSave')}
-            </button>
-          </div>
-          {notifMsg && <p className="text-[#f87171] text-xs mt-2">{notifMsg}</p>}
-        </div>
+        <div className="space-y-3 px-4">
 
-        {/* Backup */}
-        <div className="bg-[#1e293b] rounded-2xl p-4 space-y-3">
-          <button onClick={exportBackup}
-            className="w-full py-3 rounded-xl bg-[#334155] text-[#f1f5f9] font-medium min-h-[44px]">
-            📤 {t('settings.export')}
-          </button>
-          <button onClick={() => fileRef.current?.click()}
-            className="w-full py-3 rounded-xl bg-[#334155] text-[#f1f5f9] font-medium min-h-[44px]">
-            📥 {t('settings.import')}
-          </button>
-          <input ref={fileRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
-          {importError && <p className="text-[#f87171] text-xs">{importError}</p>}
-        </div>
-
-        {/* Reset */}
-        <div className="bg-[#1e293b] rounded-2xl p-4">
-          {!showResetConfirm ? (
-            <button onClick={() => setShowResetConfirm(true)}
-              className="w-full py-3 rounded-xl text-[#f87171] font-medium min-h-[44px]">
-              🔄 {t('settings.reset')}
-            </button>
-          ) : (
-            <div className="space-y-3">
-              <p className="text-[#f87171] text-sm text-center">{t('settings.resetConfirm')}</p>
-              <div className="flex gap-2">
-                <button onClick={() => setShowResetConfirm(false)}
-                  className="flex-1 py-3 rounded-xl bg-[#334155] text-[#f1f5f9] min-h-[44px]">{t('settings.cancel')}</button>
-                <button onClick={handleReset}
-                  className="flex-1 py-3 rounded-xl bg-[#f87171] text-white font-bold min-h-[44px]">{t('settings.reset')}</button>
-              </div>
+          {/* Language */}
+          <section className="bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4">
+            <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-3">{t('settings.language')}</p>
+            <div className="flex gap-2">
+              {(['ar', 'en'] as const).map(lang => (
+                <button
+                  key={lang}
+                  onClick={() => handleLanguage(lang)}
+                  className={`flex-1 py-2.5 rounded-xl font-semibold text-sm min-h-[44px] transition-all duration-200 ${
+                    language === lang
+                      ? 'bg-[#047857] text-white shadow-md shadow-[#047857]/30'
+                      : 'bg-[#0f172a] text-[#64748b] border border-[#334155] hover:border-[#475569]'
+                  }`}
+                >
+                  {t(`settings.${lang}`)}
+                </button>
+              ))}
             </div>
-          )}
+          </section>
+
+          {/* Notification */}
+          <section className="bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4">
+            <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-3">{t('settings.notification')}</p>
+            <div className="flex gap-2 items-stretch">
+              {/* In RTL: Save button first in source = visually on the right */}
+              <button
+                onClick={handleSaveNotification}
+                className="px-5 py-2.5 bg-[#047857] text-white rounded-xl font-semibold text-sm min-h-[44px] hover:bg-[#059669] transition-colors flex-shrink-0"
+              >
+                {t('settings.notificationSave')}
+              </button>
+              <input
+                type="time"
+                value={notifValue}
+                onChange={e => setNotifValue(e.target.value)}
+                className="flex-1 bg-[#0f172a] text-[#f1f5f9] rounded-xl px-3 py-2.5 border border-[#334155] min-h-[44px] focus:border-[#047857] outline-none transition-colors"
+              />
+            </div>
+            {notifMsg && <p className="text-[#f87171] text-xs mt-2">{notifMsg}</p>}
+          </section>
+
+          {/* Sync & Backup */}
+          <section className="bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4 space-y-2.5">
+            <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-3">{t('settings.sync')}</p>
+            <button
+              onClick={() => setShowShare(true)}
+              className="w-full py-3 rounded-xl font-bold text-sm min-h-[44px] flex items-center justify-center gap-2 text-white transition-all active:scale-[0.98]"
+              style={{ background: 'linear-gradient(135deg, #047857 0%, #059669 100%)' }}
+            >
+              <span>📲</span> {t('settings.sync')}
+            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={exportBackup}
+                className="flex-1 py-2.5 rounded-xl bg-[#0f172a] border border-[#334155] text-[#94a3b8] text-sm min-h-[44px] hover:border-[#475569] transition-colors"
+              >
+                📤 {t('settings.export')}
+              </button>
+              <button
+                onClick={() => fileRef.current?.click()}
+                className="flex-1 py-2.5 rounded-xl bg-[#0f172a] border border-[#334155] text-[#94a3b8] text-sm min-h-[44px] hover:border-[#475569] transition-colors"
+              >
+                📥 {t('settings.import')}
+              </button>
+            </div>
+            <input ref={fileRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
+            {importError && <p className="text-[#f87171] text-xs">{importError}</p>}
+          </section>
+
+          {/* Feature 4: Grace Day info */}
+          <section className="bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4">
+            <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-3">{t('settings.graceDay')}</p>
+            <div className="flex items-center justify-between">
+              <p className="text-[#94a3b8] text-sm">{t('settings.graceDay')}</p>
+              <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${
+                graceUsedThisMonth
+                  ? 'bg-[#334155]/50 text-[#475569]'
+                  : 'bg-[#047857]/20 text-[#34d399]'
+              }`}>
+                {graceUsedThisMonth
+                  ? t('settings.graceDayRemaining_zero')
+                  : t('settings.graceDayRemaining_one', { count: 1 })
+                }
+              </span>
+            </div>
+            <p className="text-[#475569] text-xs mt-2">{t('settings.graceDayHint')}</p>
+          </section>
+
+          {/* Reset */}
+          <section className="bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4">
+            {!showResetConfirm ? (
+              <button
+                onClick={() => setShowResetConfirm(true)}
+                className="w-full py-3 rounded-xl text-[#f87171] font-medium text-sm min-h-[44px] hover:bg-[#f87171]/10 transition-colors"
+              >
+                🔄 {t('settings.reset')}
+              </button>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-[#f87171] text-sm text-center">{t('settings.resetConfirm')}</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setShowResetConfirm(false)}
+                    className="flex-1 py-3 rounded-xl bg-[#0f172a] border border-[#334155] text-[#f1f5f9] text-sm min-h-[44px]"
+                  >
+                    {t('settings.cancel')}
+                  </button>
+                  <button
+                    onClick={handleReset}
+                    className="flex-1 py-3 rounded-xl bg-[#f87171] text-white font-bold text-sm min-h-[44px]"
+                  >
+                    {t('settings.reset')}
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
+
         </div>
       </div>
 
       <BottomNav />
+      {showShare && <ShareModal onClose={() => setShowShare(false)} />}
     </div>
   )
 }
