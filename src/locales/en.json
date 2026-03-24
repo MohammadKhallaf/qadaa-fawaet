@@ -177,7 +177,9 @@
     "graceDay": "Grace Day",
     "graceDayRemaining_one": "{{count}} remaining this month",
     "graceDayRemaining_zero": "Used this month",
-    "graceDayHint": "Miss one day without breaking your streak — once per month"
+    "graceDayHint": "Miss one day without breaking your streak — once per month",
+    "feedback": "Share Your Feedback",
+    "feedbackHint": "Help us improve the app — takes 2 minutes"
   },
   "nav": {
     "dashboard": "Home",

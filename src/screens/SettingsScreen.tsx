@@ -207,6 +207,21 @@ export default function SettingsScreen() {
             <p className="text-[#475569] text-xs mt-2">{t('settings.graceDayHint')}</p>
           </section>
 
+          {/* Feedback */}
+          <section className="bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4">
+            <p className="text-[#475569] text-xs font-semibold uppercase tracking-widest mb-3">{t('settings.feedback')}</p>
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSf0NYAuWgC3RpcaCfTZi1Cgn0T1v3pd6ApjI660N19wPNry7w/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3 rounded-xl font-bold text-sm min-h-[44px] flex items-center justify-center gap-2 text-white transition-all active:scale-[0.98]"
+              style={{ background: 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)', display: 'flex' }}
+            >
+              <span>💬</span> {t('settings.feedback')}
+            </a>
+            <p className="text-[#475569] text-xs mt-2 text-center">{t('settings.feedbackHint')}</p>
+          </section>
+
           {/* Reset */}
           <section className="bg-[#1e293b] border border-[#334155]/50 rounded-2xl p-4">
             {!showResetConfirm ? (

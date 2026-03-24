@@ -177,7 +177,9 @@
     "graceDay": "يوم الرحمة",
     "graceDayRemaining_one": "متبقي: {{count}} هذا الشهر",
     "graceDayRemaining_zero": "تم استخدامه هذا الشهر",
-    "graceDayHint": "إذا فاتك يوم واحد، لن تنكسر سلسلتك — مرة في الشهر"
+    "graceDayHint": "إذا فاتك يوم واحد، لن تنكسر سلسلتك — مرة في الشهر",
+    "feedback": "شاركنا رأيك",
+    "feedbackHint": "ساعدنا في تحسين التطبيق — لن يستغرق دقيقتين"
   },
   "nav": {
     "dashboard": "الرئيسية",
