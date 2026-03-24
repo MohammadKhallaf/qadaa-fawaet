@@ -24,7 +24,8 @@
     "confirm": "ابدأ الرحلة",
     "back": "رجوع",
     "next": "التالي",
-    "zeroDaysWarning": "يجب أن تكون هناك فترة فوائت واحدة على الأقل."
+    "zeroDaysWarning": "يجب أن تكون هناك فترة فوائت واحدة على الأقل.",
+    "yearsPlaceholder": "سنوات"
   },
   "dashboard": {
     "today": "اليوم",

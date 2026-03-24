@@ -60,12 +60,12 @@ export default function WizardScreen() {
             <div>
               <label className="block text-sm text-[#64748b] mb-1">{t('wizard.ageLabel')}</label>
               <input type="number" min={10} max={120} value={age} onChange={e => setAge(e.target.value)}
-                className="w-full bg-[#1e293b] text-[#f1f5f9] rounded-lg px-4 py-3 text-lg outline-none border border-[#334155] focus:border-[#047857]" />
+                className="w-full bg-[#1e293b] text-[#f1f5f9] rounded-lg px-4 py-3 text-lg outline-none border border-[#334155] focus:border-[#047857] min-h-[44px]" />
             </div>
             <div>
               <label className="block text-sm text-[#64748b] mb-1">{t('wizard.pubertyAgeLabel')}</label>
               <input type="number" min={5} max={ageNum - 1 || 119} value={pubertyAge} onChange={e => setPubertyAge(e.target.value)}
-                className="w-full bg-[#1e293b] text-[#f1f5f9] rounded-lg px-4 py-3 text-lg outline-none border border-[#334155] focus:border-[#047857]" />
+                className="w-full bg-[#1e293b] text-[#f1f5f9] rounded-lg px-4 py-3 text-lg outline-none border border-[#334155] focus:border-[#047857] min-h-[44px]" />
             </div>
             <button disabled={!step1Valid} onClick={() => setStep(2)}
               className="w-full py-4 rounded-xl font-bold text-lg bg-[#047857] text-white disabled:opacity-40 disabled:cursor-not-allowed min-h-[44px]">
@@ -82,7 +82,7 @@ export default function WizardScreen() {
               <div>
                 <label className="block text-sm text-[#64748b] mb-1">{t('wizard.yearsLabel')}</label>
                 <input type="number" min={0.5} max={99} step={0.5} value={quickYears} onChange={e => setQuickYears(e.target.value)}
-                  className="w-full bg-[#1e293b] text-[#f1f5f9] rounded-lg px-4 py-3 text-lg outline-none border border-[#334155] focus:border-[#047857]" />
+                  className="w-full bg-[#1e293b] text-[#f1f5f9] rounded-lg px-4 py-3 text-lg outline-none border border-[#334155] focus:border-[#047857] min-h-[44px]" />
               </div>
             ) : (
               <div className="space-y-3">
@@ -90,13 +90,13 @@ export default function WizardScreen() {
                   <div key={i} className="flex gap-2 items-center">
                     <select value={p.type} onChange={e => {
                         const np = [...periods]; np[i] = { ...p, type: e.target.value as 'missed'|'regular' }; setPeriods(np)
-                      }} className="bg-[#1e293b] text-[#f1f5f9] rounded-lg px-3 py-2 border border-[#334155]">
+                      }} className="bg-[#1e293b] text-[#f1f5f9] rounded-lg px-3 py-2 border border-[#334155] min-h-[44px]">
                       <option value="missed">{t('wizard.periodMissed')}</option>
                       <option value="regular">{t('wizard.periodRegular')}</option>
                     </select>
                     <input type="number" min={0.5} max={99} step={0.5} value={p.years || ''} onChange={e => {
                         const np = [...periods]; np[i] = { ...p, years: parseFloat(e.target.value) || 0 }; setPeriods(np)
-                      }} className="flex-1 bg-[#1e293b] text-[#f1f5f9] rounded-lg px-3 py-2 border border-[#334155]" placeholder="سنوات" />
+                      }} className="flex-1 bg-[#1e293b] text-[#f1f5f9] rounded-lg px-3 py-2 border border-[#334155] min-h-[44px]" placeholder={t('wizard.yearsPlaceholder')} />
                     {periods.length > 1 && (
                       <button onClick={() => setPeriods(periods.filter((_, j) => j !== i))}
                         className="text-[#f87171] text-sm px-2 min-h-[44px]">{t('wizard.removePeriod')}</button>

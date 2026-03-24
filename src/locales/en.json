@@ -24,7 +24,8 @@
     "confirm": "Start the journey",
     "back": "Back",
     "next": "Next",
-    "zeroDaysWarning": "At least one missed period is required."
+    "zeroDaysWarning": "At least one missed period is required.",
+    "yearsPlaceholder": "Years"
   },
   "dashboard": {
     "today": "Today",
