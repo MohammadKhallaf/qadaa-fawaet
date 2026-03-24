@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qadaa — LinkedIn Post</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #060d0a;
+    --surface:  #0d1f18;
+    --card:     #111f19;
+    --border:   #1e3d2c;
+    --gold:     #c9a84c;
+    --gold-dim: #8a6e2f;
+    --emerald:  #2ecc71;
+    --em-dim:   #1a7a45;
+    --text:     #e8e0d0;
+    --muted:    #7a9080;
+    --white:    #f5f0e8;
+  }
+
+  body {
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  /* ── Geometric background ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(60deg, transparent, transparent 40px, rgba(201,168,76,0.03) 40px, rgba(201,168,76,0.03) 41px),
+      repeating-linear-gradient(-60deg, transparent, transparent 40px, rgba(201,168,76,0.03) 40px, rgba(201,168,76,0.03) 41px),
+      repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(46,204,113,0.02) 40px, rgba(46,204,113,0.02) 41px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Lang switcher ── */
+  .lang-switcher {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 5px;
+    position: relative;
+    z-index: 2;
+  }
+  .lang-btn {
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 100px;
+    transition: all .25s;
+    letter-spacing: .05em;
+  }
+  .lang-btn.active {
+    background: var(--gold);
+    color: #0a0a0a;
+    font-weight: 700;
+  }
+
+  /* ── Card wrapper ── */
+  .card-wrap {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 680px;
+  }
+
+  /* ── Post card ── */
+  .post-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    display: none;
+    animation: fadeUp .4s ease both;
+  }
+  .post-card.visible { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Islamic star ornament (CSS only) */
+  .post-card::before {
+    content: '✦';
+    position: absolute;
+    top: -30px;
+    left: -30px;
+    font-size: 160px;
+    color: rgba(201,168,76,0.04);
+    line-height: 1;
+    pointer-events: none;
+    transform: rotate(15deg);
+  }
+  .post-card::after {
+    content: '✦';
+    position: absolute;
+    bottom: -40px;
+    right: -20px;
+    font-size: 220px;
+    color: rgba(46,204,113,0.03);
+    line-height: 1;
+    pointer-events: none;
+    transform: rotate(-10deg);
+  }
+
+  /* ── Header ── */
+  .post-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .app-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0a4a2a 0%, #1a7a45 100%);
+    border: 1px solid var(--em-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 20px rgba(46,204,113,0.15);
+  }
+  .app-meta { flex: 1; }
+  .app-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -.01em;
+    line-height: 1;
+  }
+  .app-name span { color: var(--gold); }
+  .app-tagline {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .post-badge {
+    background: linear-gradient(135deg, rgba(201,168,76,.15), rgba(201,168,76,.05));
+    border: 1px solid rgba(201,168,76,.3);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 100px;
+    letter-spacing: .06em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ── Body text ── */
+  .post-body {
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 15px;
+    margin-bottom: 28px;
+    white-space: pre-line;
+  }
+  .post-body strong { color: var(--white); }
+  .post-body .gold { color: var(--gold); font-weight: 600; }
+  .post-body .em   { color: var(--emerald); font-weight: 600; }
+
+  /* ── Stats row ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+    transition: border-color .2s;
+  }
+  .stat-box:hover { border-color: var(--gold-dim); }
+  .stat-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+  }
+  .stat-lbl {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 5px;
+    display: block;
+    letter-spacing: .05em;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin-bottom: 24px;
+  }
+
+  /* ── Hashtags ── */
+  .hashtags {
+    font-size: 13px;
+    color: var(--em-dim);
+    line-height: 2;
+    margin-bottom: 28px;
+    letter-spacing: .02em;
+  }
+  .hashtags a { color: #2ecc71; text-decoration: none; opacity: .8; }
+
+  /* ── CTA link ── */
+  .cta-link {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    transition: border-color .2s;
+  }
+  .cta-link:hover { border-color: var(--em-dim); }
+  .cta-link-icon { font-size: 18px; }
+  .cta-link-url {
+    font-size: 12px;
+    color: var(--emerald);
+    opacity: .8;
+    letter-spacing: .04em;
+    word-break: break-all;
+  }
+  .cta-link-label {
+    font-size: 13px;
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  /* ── Copy button ── */
+  .copy-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--gold-dim);
+    background: linear-gradient(135deg, rgba(201,168,76,.12), rgba(201,168,76,.04));
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all .2s;
+  }
+  .copy-btn:hover {
+    background: linear-gradient(135deg, rgba(201,168,76,.22), rgba(201,168,76,.1));
+    border-color: var(--gold);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(201,168,76,.15);
+  }
+  .copy-btn.copied {
+    background: linear-gradient(135deg, rgba(46,204,113,.15), rgba(46,204,113,.05));
+    border-color: var(--em-dim);
+    color: var(--emerald);
+  }
+  .copy-icon { font-size: 16px; }
+
+  /* ── Footer label ── */
+  .card-footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 20px;
+    letter-spacing: .06em;
+    opacity: .6;
+  }
+
+  /* RTL/LTR per card */
+  .card-ar { direction: rtl; font-family: 'Amiri', serif; }
+  .card-en { direction: ltr; font-family: 'DM Mono', monospace; }
+  .card-ar .post-body { font-family: 'Amiri', serif; font-size: 17px; line-height: 2; }
+  .card-ar .app-tagline { font-family: 'DM Mono', monospace; }
+  .card-ar .stat-lbl { font-family: 'Amiri', serif; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<!-- Lang switcher -->
+<div class="lang-switcher">
+  <button class="lang-btn active" onclick="switchLang('ar')">العربية</button>
+  <button class="lang-btn" onclick="switchLang('en')">English</button>
+</div>
+
+<div class="card-wrap">
+
+  <!-- ══════════════ ARABIC CARD ══════════════ -->
+  <div class="post-card card-ar visible" id="card-ar">
+
+    <div class="post-header">
+      <div class="app-icon">🕌</div>
+      <div class="app-meta">
+        <div class="app-name">قـضـاء <span>·</span> Qadaa</div>
+        <div class="app-tagline">Prayer Recovery App · PWA</div>
+      </div>
+      <div class="post-badge">🆕 مجاني</div>
+    </div>
+
+    <div class="post-body">كم مرة فكّرت في قضاء صلواتك الفائتة لكن لم تعرف من أين تبدأ؟
+
+طوّرت تطبيق <strong>قضاء</strong> — تطبيق ويب مجاني يساعدك على:
+
+<span class="gold">📿 تتبّع صلواتك الفائتة</span> — أدخل عدد السنوات وسيحسب لك الإجمالي.
+<span class="gold">🔥 بناء سلسلة يومية</span> — لا تنقطع، يوم بعد يوم.
+<span class="gold">🏆 كسب نقاط وشارات</span> — تحفيز حقيقي يجعل الرحلة أخف.
+<span class="gold">📊 رؤية تقدّمك</span> — تقدير تاريخ الإنهاء، معدّل يومي، وأكثر.
+
+<span class="em">لا تسجيل دخول. لا بيانات مرفوعة. يعمل بدون إنترنت.</span>
+
+الرحلة طويلة — لكنها تبدأ بخطوة.</div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <span class="stat-val">١٠٠٪</span>
+        <span class="stat-lbl">مجاني للأبد</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-val">٥</span>
+        <span class="stat-lbl">صلوات مُتتبَّعة</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-val">٠</span>
+        <span class="stat-lbl">تسجيل مطلوب</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="cta-link">
+      <span class="cta-link-icon">🔗</span>
+      <div>
+        <div class="cta-link-label">جرّب التطبيق الآن</div>
+        <div class="cta-link-url">qadaa-fawaet.vercel.app</div>
+      </div>
+    </div>
+
+    <div class="hashtags">
+      #قضاء_الصلوات &nbsp; #تطوير_ويب &nbsp; #مسلم_مبرمج
+      #ReactJS &nbsp; #PWA &nbsp; #OpenSource &nbsp; #مشاريع_عربية
+    </div>
+
+    <button class="copy-btn" id="copy-btn-ar" onclick="copyPost('ar')">
+      <span class="copy-icon">⧉</span>
+      <span>نسخ النص للنشر</span>
+    </button>
+  </div>
+
+  <!-- ══════════════ ENGLISH CARD ══════════════ -->
+  <div class="post-card card-en" id="card-en">
+
+    <div class="post-header">
+      <div class="app-icon">🕌</div>
+      <div class="app-meta">
+        <div class="app-name">Qadaa <span>·</span> قضاء</div>
+        <div class="app-tagline">Prayer Recovery App · PWA · Free Forever</div>
+      </div>
+      <div class="post-badge">🆕 LAUNCH</div>
+    </div>
+
+    <div class="post-body">If you've ever felt the weight of missed prayers and didn't know where to start — this is for you.
+
+I built <strong>Qadaa</strong>, a free PWA that helps you make up missed prayers, one day at a time:
+
+<span class="gold">📿 Track your missed prayers</span> — enter your years and get your total instantly.
+<span class="gold">🔥 Build a daily streak</span> — consistency is the secret, don't break it.
+<span class="gold">🏆 Earn points & badges</span> — real motivation for a long journey.
+<span class="gold">📊 See your progress</span> — completion estimate, daily pace, weekly grid.
+
+<span class="em">No login. No data sent anywhere. Works fully offline.</span>
+
+Built with React 19 + Vite 8 + Zustand + Tailwind v4 + PWA.
+The journey is long — but it starts with one prayer.</div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <span class="stat-val">100%</span>
+        <span class="stat-lbl">Free Forever</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-val">5</span>
+        <span class="stat-lbl">Prayers tracked</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-val">0</span>
+        <span class="stat-lbl">Login required</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="cta-link">
+      <span class="cta-link-icon">🔗</span>
+      <div>
+        <div class="cta-link-label">Try the app now</div>
+        <div class="cta-link-url">qadaa-fawaet.vercel.app</div>
+      </div>
+    </div>
+
+    <div class="hashtags">
+      #Islam &nbsp; #WebDev &nbsp; #ReactJS &nbsp; #PWA
+      #OpenSource &nbsp; #Muslim &nbsp; #SideProject &nbsp; #JavaScript
+    </div>
+
+    <button class="copy-btn" id="copy-btn-en" onclick="copyPost('en')">
+      <span class="copy-icon">⧉</span>
+      <span>Copy Post Text</span>
+    </button>
+  </div>
+
+  <div class="card-footer">QADAA · قضاء — linkedin post generator</div>
+</div>
+
+<script>
+const posts = {
+  ar: `كم مرة فكّرت في قضاء صلواتك الفائتة لكن لم تعرف من أين تبدأ؟
+
+طوّرت تطبيق قضاء — تطبيق ويب مجاني يساعدك على:
+
+📿 تتبّع صلواتك الفائتة — أدخل عدد السنوات وسيحسب لك الإجمالي.
+🔥 بناء سلسلة يومية — لا تنقطع، يوم بعد يوم.
+🏆 كسب نقاط وشارات — تحفيز حقيقي يجعل الرحلة أخف.
+📊 رؤية تقدّمك — تقدير تاريخ الإنهاء، معدّل يومي، وأكثر.
+
+✅ لا تسجيل دخول. لا بيانات مرفوعة. يعمل بدون إنترنت.
+
+🔗 جرّبه الآن: qadaa-fawaet.vercel.app
+
+الرحلة طويلة — لكنها تبدأ بخطوة.
+
+💬 شاركنا تجربتك وساعدنا في تحسين التطبيق — رأيك يصنع فرقاً.
+
+#قضاء_الصلوات #تطوير_ويب #مسلم_مبرمج #ReactJS #PWA #مشاريع_عربية`,
+
+  en: `If you've ever felt the weight of missed prayers and didn't know where to start — this is for you.
+
+I built Qadaa, a free PWA that helps you make up missed prayers, one day at a time:
+
+📿 Track your missed prayers — enter your years and get your total instantly.
+🔥 Build a daily streak — consistency is the secret, don't break it.
+🏆 Earn points & badges — real motivation for a long journey.
+📊 See your progress — completion estimate, daily pace, weekly grid.
+
+✅ No login. No data sent anywhere. Works fully offline.
+
+🔗 Try it now: qadaa-fawaet.vercel.app
+
+Built with React 19 + Vite 8 + Zustand + Tailwind v4 + PWA.
+
+The journey is long — but it starts with one prayer.
+
+💬 I'd love your feedback — it takes 2 minutes and helps a lot.
+
+#Islam #WebDev #ReactJS #PWA #OpenSource #Muslim #SideProject #JavaScript`
+};
+
+function switchLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.post-card').forEach(c => c.classList.remove('visible'));
+  document.getElementById('card-' + lang).classList.add('visible');
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+}
+
+function copyPost(lang) {
+  const btn = document.getElementById('copy-btn-' + lang);
+  navigator.clipboard.writeText(posts[lang]).then(() => {
+    btn.classList.add('copied');
+    btn.querySelector('span:last-child').textContent = lang === 'ar' ? '✓ تم النسخ!' : '✓ Copied!';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.querySelector('span:last-child').textContent = lang === 'ar' ? 'نسخ النص للنشر' : 'Copy Post Text';
+    }, 2500);
+  });
+}
+</script>
+</body>
+</html>
