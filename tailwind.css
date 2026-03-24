@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #047857;
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface2: #334155;
+  --color-gold: #f59e0b;
+  --color-text: #f1f5f9;
+  --color-muted: #64748b;
+  --font-family-sans: 'Tajawal', sans-serif;
+}
+
+@font-face {
+  font-family: 'Tajawal';
+  src: url('/fonts/tajawal/Tajawal-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tajawal';
+  src: url('/fonts/tajawal/Tajawal-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tajawal';
+  src: url('/fonts/tajawal/Tajawal-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
