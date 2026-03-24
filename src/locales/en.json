@@ -1,0 +1,82 @@
+{
+  "app": { "name": "Qadaa" },
+  "prayers": {
+    "fajr": "Fajr",
+    "dhuhr": "Dhuhr",
+    "asr": "Asr",
+    "maghrib": "Maghrib",
+    "isha": "Isha"
+  },
+  "wizard": {
+    "step1Title": "Your Info",
+    "ageLabel": "Your current age",
+    "pubertyAgeLabel": "Age at puberty",
+    "step2Title": "Missed Prayer Years",
+    "yearsLabel": "How many years did you not pray?",
+    "advancedToggle": "Advanced mode",
+    "addPeriod": "Add period",
+    "removePeriod": "Remove",
+    "periodMissed": "Missed",
+    "periodRegular": "Regular",
+    "totalMissed": "Total missed days",
+    "step3Title": "Summary",
+    "totalPrayers": "Total missed prayers",
+    "confirm": "Start the journey",
+    "back": "Back",
+    "next": "Next",
+    "zeroDaysWarning": "At least one missed period is required."
+  },
+  "dashboard": {
+    "today": "Today",
+    "outOf": "of",
+    "logFullDay": "Log Full Day",
+    "recovered": "recovered"
+  },
+  "stats": {
+    "title": "Your Stats",
+    "streak": "Day Streak",
+    "level": "Level",
+    "levelHint": "Level increases every 30 days",
+    "points": "Points",
+    "badges": "Badges",
+    "lockedBadge": "Locked",
+    "ranks": {
+      "bronze": "Bronze",
+      "silver": "Silver",
+      "gold": "Gold",
+      "platinum": "Platinum"
+    },
+    "badges_data": {
+      "first_log": "First Step",
+      "first_week": "Blessed Week",
+      "warrior_30": "30-Day Warrior",
+      "golden_year": "Golden Year",
+      "quarter_way": "Quarter Way",
+      "halfway": "Halfway",
+      "almost_there": "Almost There",
+      "complete": "Prayer Complete"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "ar": "العربية",
+    "en": "English",
+    "notification": "Daily Reminder",
+    "notificationSave": "Save",
+    "notificationDenied": "Please allow notifications in browser settings",
+    "export": "Export Backup",
+    "import": "Import Backup",
+    "reset": "Reset Wizard",
+    "resetConfirm": "Are you sure? All your data will be deleted.",
+    "cancel": "Cancel"
+  },
+  "nav": {
+    "dashboard": "Home",
+    "stats": "Stats",
+    "settings": "Settings"
+  },
+  "errors": {
+    "importFailed": "Failed to import file. Please check the file is valid."
+  }
+}

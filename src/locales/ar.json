@@ -1,0 +1,82 @@
+{
+  "app": { "name": "قضاء" },
+  "prayers": {
+    "fajr": "الفجر",
+    "dhuhr": "الظهر",
+    "asr": "العصر",
+    "maghrib": "المغرب",
+    "isha": "العشاء"
+  },
+  "wizard": {
+    "step1Title": "معلوماتك",
+    "ageLabel": "عمرك الحالي",
+    "pubertyAgeLabel": "عمر البلوغ",
+    "step2Title": "سنوات الفوائت",
+    "yearsLabel": "كم سنة لم تصلِّ؟",
+    "advancedToggle": "وضع متقدم",
+    "addPeriod": "إضافة فترة",
+    "removePeriod": "حذف",
+    "periodMissed": "فوائت",
+    "periodRegular": "منتظم",
+    "totalMissed": "إجمالي الأيام المقضية",
+    "step3Title": "ملخص",
+    "totalPrayers": "إجمالي الصلوات المقضية",
+    "confirm": "ابدأ الرحلة",
+    "back": "رجوع",
+    "next": "التالي",
+    "zeroDaysWarning": "يجب أن تكون هناك فترة فوائت واحدة على الأقل."
+  },
+  "dashboard": {
+    "today": "اليوم",
+    "outOf": "من",
+    "logFullDay": "تسجيل يوم كامل",
+    "recovered": "مُقضي"
+  },
+  "stats": {
+    "title": "إحصائياتك",
+    "streak": "سلسلة الأيام",
+    "level": "المستوى",
+    "levelHint": "المستوى يرتفع بكل ٣٠ يوم",
+    "points": "النقاط",
+    "badges": "الشارات",
+    "lockedBadge": "مغلق",
+    "ranks": {
+      "bronze": "برونزي",
+      "silver": "فضي",
+      "gold": "ذهبي",
+      "platinum": "بلاتيني"
+    },
+    "badges_data": {
+      "first_log": "أول خطوة",
+      "first_week": "أسبوع مبارك",
+      "warrior_30": "مجاهد ٣٠",
+      "golden_year": "سنة ذهبية",
+      "quarter_way": "ربع الطريق",
+      "halfway": "منتصف الطريق",
+      "almost_there": "اقتربت",
+      "complete": "أتممت فريضة"
+    }
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "language": "اللغة",
+    "ar": "العربية",
+    "en": "English",
+    "notification": "تذكير يومي",
+    "notificationSave": "حفظ",
+    "notificationDenied": "يرجى السماح بالإشعارات في إعدادات المتصفح",
+    "export": "تصدير النسخة الاحتياطية",
+    "import": "استيراد النسخة الاحتياطية",
+    "reset": "إعادة الإعداد",
+    "resetConfirm": "هل أنت متأكد؟ سيتم حذف جميع بياناتك.",
+    "cancel": "إلغاء"
+  },
+  "nav": {
+    "dashboard": "الرئيسية",
+    "stats": "الإحصائيات",
+    "settings": "الإعدادات"
+  },
+  "errors": {
+    "importFailed": "فشل استيراد الملف. تأكد من صحة الملف."
+  }
+}
