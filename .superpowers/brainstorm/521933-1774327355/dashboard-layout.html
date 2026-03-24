@@ -1,0 +1,118 @@
+<h2>Dashboard Layout — Which feels right?</h2>
+<p class="subtitle">Mobile-first. RTL Arabic. Both show "Today's Progress" + 5 prayer cards.</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f172a;padding:14px;border-radius:8px;font-size:12px;color:#94a3b8;max-width:220px;margin:0 auto;direction:rtl;font-family:sans-serif">
+      <!-- Header -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="color:#34d399;font-size:14px;font-weight:bold">قضاء</span>
+        <span style="color:#fbbf24;font-size:11px">🔥 ٧ أيام</span>
+      </div>
+      <!-- Today strip -->
+      <div style="background:#1e293b;border-radius:8px;padding:10px;margin-bottom:10px">
+        <div style="color:#f1f5f9;font-size:11px;margin-bottom:6px">اليوم</div>
+        <div style="display:flex;gap:6px;justify-content:center">
+          <div style="background:#34d399;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff">فجر</div>
+          <div style="background:#34d399;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff">ظهر</div>
+          <div style="background:#475569;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:#94a3b8">عصر</div>
+          <div style="background:#475569;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:#94a3b8">مغرب</div>
+          <div style="background:#475569;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:#94a3b8">عشاء</div>
+        </div>
+      </div>
+      <!-- Prayer cards grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="background:#1e293b;border-radius:6px;padding:8px;text-align:center">
+          <div style="color:#f1f5f9;font-size:10px;margin-bottom:4px">الفجر</div>
+          <div style="color:#34d399;font-size:13px;font-weight:bold">٦٨٪</div>
+          <div style="color:#64748b;font-size:9px">١٢٠ / ١٧٦</div>
+        </div>
+        <div style="background:#1e293b;border-radius:6px;padding:8px;text-align:center">
+          <div style="color:#f1f5f9;font-size:10px;margin-bottom:4px">الظهر</div>
+          <div style="color:#34d399;font-size:13px;font-weight:bold">٧٢٪</div>
+          <div style="color:#64748b;font-size:9px">١٢٦ / ١٧٦</div>
+        </div>
+        <div style="background:#1e293b;border-radius:6px;padding:8px;text-align:center">
+          <div style="color:#f1f5f9;font-size:10px;margin-bottom:4px">العصر</div>
+          <div style="color:#34d399;font-size:13px;font-weight:bold">٦٥٪</div>
+          <div style="color:#64748b;font-size:9px">١١٤ / ١٧٦</div>
+        </div>
+        <div style="background:#1e293b;border-radius:6px;padding:8px;text-align:center">
+          <div style="color:#f1f5f9;font-size:10px;margin-bottom:4px">المغرب</div>
+          <div style="color:#fbbf24;font-size:13px;font-weight:bold">٤٥٪</div>
+          <div style="color:#64748b;font-size:9px">٧٩ / ١٧٦</div>
+        </div>
+      </div>
+      <div style="background:#1e293b;border-radius:6px;padding:8px;text-align:center;margin-top:6px">
+        <div style="color:#f1f5f9;font-size:10px;margin-bottom:4px">العشاء</div>
+        <div style="color:#34d399;font-size:13px;font-weight:bold">٧٨٪</div>
+        <div style="color:#64748b;font-size:9px">١٣٧ / ١٧٦</div>
+      </div>
+      <!-- Quick log -->
+      <div style="background:#34d399;border-radius:8px;padding:8px;text-align:center;margin-top:8px;color:#0f172a;font-weight:bold;font-size:11px">تسجيل يوم كامل ✓</div>
+    </div>
+    <div class="card-body">
+      <h3>A — Compact Grid</h3>
+      <p>Today's 5 prayer circles at top, then 2×2 grid + 1 prayer cards. Dense but fits everything on one screen without scrolling.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f172a;padding:14px;border-radius:8px;font-size:12px;color:#94a3b8;max-width:220px;margin:0 auto;direction:rtl;font-family:sans-serif">
+      <!-- Header -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="color:#34d399;font-size:14px;font-weight:bold">قضاء</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="color:#fbbf24;font-size:11px">🔥 ٧</span>
+          <span style="color:#94a3b8;font-size:10px">Lvl 3</span>
+        </div>
+      </div>
+      <!-- Today banner -->
+      <div style="background:linear-gradient(135deg,#064e3b,#065f46);border-radius:8px;padding:10px;margin-bottom:10px">
+        <div style="color:#6ee7b7;font-size:10px">اليوم — ٢ من ٥</div>
+        <div style="background:#0f172a;border-radius:4px;height:6px;margin-top:6px">
+          <div style="background:#34d399;width:40%;height:100%;border-radius:4px"></div>
+        </div>
+      </div>
+      <!-- Scrollable prayer list -->
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="background:#1e293b;border-radius:8px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="color:#f1f5f9;font-size:11px">الفجر</div>
+            <div style="color:#64748b;font-size:9px">١٢٠ / ١٧٦</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:36px;height:36px;border-radius:50%;border:3px solid #34d399;display:flex;align-items:center;justify-content:center;color:#34d399;font-size:11px;font-weight:bold">٦٨٪</div>
+            <div style="background:#34d399;color:#0f172a;border-radius:6px;padding:3px 7px;font-size:10px;font-weight:bold">✓</div>
+          </div>
+        </div>
+        <div style="background:#1e293b;border-radius:8px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="color:#f1f5f9;font-size:11px">الظهر</div>
+            <div style="color:#64748b;font-size:9px">١٢٦ / ١٧٦</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:36px;height:36px;border-radius:50%;border:3px solid #34d399;display:flex;align-items:center;justify-content:center;color:#34d399;font-size:11px;font-weight:bold">٧٢٪</div>
+            <div style="background:#475569;color:#94a3b8;border-radius:6px;padding:3px 7px;font-size:10px">+١</div>
+          </div>
+        </div>
+        <div style="background:#1e293b;border-radius:8px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;opacity:0.7">
+          <div>
+            <div style="color:#f1f5f9;font-size:11px">العصر</div>
+            <div style="color:#64748b;font-size:9px">١١٤ / ١٧٦</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:36px;height:36px;border-radius:50%;border:3px solid #475569;display:flex;align-items:center;justify-content:center;color:#64748b;font-size:11px">٦٥٪</div>
+            <div style="background:#475569;color:#94a3b8;border-radius:6px;padding:3px 7px;font-size:10px">+١</div>
+          </div>
+        </div>
+      </div>
+      <!-- Quick log -->
+      <div style="background:#34d399;border-radius:8px;padding:8px;text-align:center;margin-top:8px;color:#0f172a;font-weight:bold;font-size:11px">تسجيل يوم كامل ✓</div>
+    </div>
+    <div class="card-body">
+      <h3>B — Vertical List</h3>
+      <p>Today's progress bar at top, then 5 prayer rows with circular progress + individual +1 buttons. Scrollable, thumb-friendly, each prayer clearly actionable.</p>
+    </div>
+  </div>
+</div>

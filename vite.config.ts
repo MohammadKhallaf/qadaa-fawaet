@@ -26,6 +26,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,png}'],
+        globIgnores: ['icons/**'],  // icons already included via manifest integration
         runtimeCaching: [
           {
             urlPattern: /\/fonts\/.+\.woff2$/,

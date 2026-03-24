@@ -1,0 +1,51 @@
+<h2>Calculation Wizard — Which flow feels right?</h2>
+<p class="subtitle">How should the user enter their prayer history with gaps?</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f172a;padding:16px;border-radius:8px;font-family:monospace;font-size:13px;color:#94a3b8;direction:ltr">
+      <div style="color:#34d399;margin-bottom:8px">Step 1 of 3 — Basic Info</div>
+      <div style="color:#f1f5f9">Age: [__] &nbsp; Puberty Age: [__]</div>
+      <div style="margin-top:12px;color:#34d399">Step 2 of 3 — Prayer Timeline</div>
+      <div style="color:#f1f5f9;margin-top:4px">
+        <div style="display:flex;align-items:center;gap:8px;margin:4px 0">
+          <span style="color:#fbbf24">●</span> Period 1: <span style="color:#34d399">Regular</span> — 2 years
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin:4px 0">
+          <span style="color:#fbbf24">●</span> Period 2: <span style="color:#f87171">Missed</span> — 1.5 years
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin:4px 0">
+          <span style="color:#fbbf24">●</span> Period 3: <span style="color:#34d399">Regular</span> — 3 years
+        </div>
+        <div style="margin-top:8px;color:#64748b">+ Add another period</div>
+      </div>
+      <div style="margin-top:12px;color:#34d399">Step 3 — Summary</div>
+      <div style="color:#f1f5f9">Total missed: <span style="color:#fbbf24">547 days</span></div>
+    </div>
+    <div class="card-body">
+      <h3>A — Multi-Period Timeline</h3>
+      <p>User adds "Regular" or "Missed" periods with durations. Wizard calculates total missed days automatically. Clean step-by-step flow.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f172a;padding:16px;border-radius:8px;font-family:monospace;font-size:13px;color:#94a3b8;direction:ltr">
+      <div style="color:#34d399;margin-bottom:8px">Step 1 — Basic Info</div>
+      <div style="color:#f1f5f9">Age: [__] &nbsp; Puberty Age: [__]</div>
+      <div style="margin-top:10px;color:#34d399">Step 2 — Quick Estimate</div>
+      <div style="color:#f1f5f9;margin-top:4px">Years NOT praying total: [__]</div>
+      <div style="margin-top:10px;color:#64748b;font-size:11px">— Advanced Mode —</div>
+      <div style="color:#f1f5f9;margin-top:4px">
+        <div>Gap 1: from age [__] to age [__]</div>
+        <div style="margin-top:4px">Gap 2: from age [__] to age [__]</div>
+        <div style="margin-top:4px;color:#64748b">+ Add gap</div>
+      </div>
+      <div style="margin-top:10px;color:#34d399">Step 3 — Summary</div>
+      <div style="color:#f1f5f9">Total missed: <span style="color:#fbbf24">547 days</span></div>
+    </div>
+    <div class="card-body">
+      <h3>B — Simple + Advanced Toggle</h3>
+      <p>Default: one total "years missed" field. Advanced toggle reveals age-range gap inputs. Lower friction for simple cases.</p>
+    </div>
+  </div>
+</div>
